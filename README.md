@@ -8,7 +8,7 @@ This project implements a rudimentary sensor fusion module which estimates the p
 
 ## Data
 
-## `./data/obj_pose-laser-radar-synthetic-input.txt`
+__`./data/obj_pose-laser-radar-synthetic-input.txt`__
 
 ```
 L	3.122427e-01	5.803398e-01	1477010443000000	6.000000e-01	6.000000e-01	5.199937e+00	0	0	6.911322e-03
