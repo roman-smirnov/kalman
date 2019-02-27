@@ -2,9 +2,9 @@
 
 This project implements a rudimentary sensor fusion module which estimates the position of a vehicle (2d, top-down) from mock Lidar and Radar sensor data. The fusion module includes an implementation of   a standard (linear) Kalman filter to handle Lidar data and a linearized (extended) Kalman filter to handle Radar data. The RMSE metric is used to evaluate estimator performance. 
 
-![Screen Shot 2019-02-27 at 20.14.05](assets/Screen Shot 2019-02-27 at 20.14.05.png)
+![Screen Shot 2019-02-27 at 20.14.05](assets/screenshot_1.png)
 
-![Screen Shot 2019-02-27 at 20.13.44](assets/Screen Shot 2019-02-27 at 20.13.44.png)
+![Screen Shot 2019-02-27 at 20.13.44](assets/screenshot_2.png)
 
 ## Data
 
