@@ -1,6 +1,3 @@
-#ifndef EVALUATION_H
-#define EVALUATION_H
-
 #include <Eigen/Dense>
 
 namespace kalman {
@@ -23,5 +20,3 @@ class Evaluation {
 };
 
 }
-
-#endif //EVALUATION_H

@@ -30,7 +30,7 @@ class LaserFilter final{
 };
 
 void LaserFilter::Update(Eigen::Vector2d &z) {
-  auto y = z - H * x;;
+  auto y = z - H * x;
   auto S = H * P * H.transpose() + R;
   auto K = P * H.transpose() * S.inverse();
   x = x+(K * y);

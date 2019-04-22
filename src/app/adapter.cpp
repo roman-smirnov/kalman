@@ -75,9 +75,11 @@ void AdapterImpl::RegisterLaserHandler(std::function<void(LaserMeasurement)> Las
 void AdapterImpl::RegisterRadarHandler(std::function<void(RadarMeasurement)> RadarHandler) {
   if(RadarHandler) this->OnRadar = RadarHandler;
 }
+
 std::unique_ptr<Adapter> Adapter::GetInstance() {
   return std::unique_ptr<Adapter>(new AdapterImpl());
 }
+
 }
 
 

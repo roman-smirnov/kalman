@@ -11,7 +11,7 @@ int main() {
   // init system components
   auto server = kalman::Server::GetInstance();
   auto adapter = kalman::Adapter::GetInstance();
-  auto fusion = kalman::Fusion::GetInstance();
+  auto fusion = kalman::Fusion::GetEkfInstance();
 
   // handle laser measurement callback
   adapter -> RegisterLaserHandler([&](kalman::LaserMeasurement measurement){

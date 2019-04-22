@@ -16,11 +16,11 @@ class Fusion {
   virtual Estimation ProcessMeasurement(LaserMeasurement &measurement) = 0;
 
   // static factory method
-  static std::unique_ptr<Fusion> GetInstance();
+  static std::unique_ptr<Fusion> GetEkfInstance();
+
+  static std::unique_ptr<Fusion> GetUkfInstance();
 
 };
-
-
 
 }
 
