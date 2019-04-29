@@ -2,8 +2,9 @@
 #define ADAPTER_H
 
 #include <models.h>
-#include <string>
 #include <functional>
+#include <memory>
+#include <iosfwd>
 
 namespace kalman {
 

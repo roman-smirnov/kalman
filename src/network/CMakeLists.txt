@@ -16,5 +16,5 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 #    link_directories(/usr/local/Cellar/libuv/1*/lib)
 endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
-target_link_libraries(${PROJECT_NAME} z ssl uv uWS)
+target_link_libraries(${PROJECT_NAME} PRIVATE z ssl uv uWS)
 target_include_directories(${PROJECT_NAME} INTERFACE ${PROJECT_SOURCE_DIR})

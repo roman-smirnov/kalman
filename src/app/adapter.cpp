@@ -1,5 +1,8 @@
 #include "adapter.h"
 #include "json.hpp"
+#include <memory>
+#include <string>
+#include <istream>
 
 namespace kalman {
 
@@ -9,18 +12,16 @@ class AdapterImpl final : public Adapter {
   std::string EstimationToMessage(Estimation estimation) override;
   void RegisterLaserHandler(std::function<void(LaserMeasurement)> LaserHandler) override;
   void RegisterRadarHandler(std::function<void(RadarMeasurement)> RadarHandler) override;
+
  private:
   static constexpr auto TELEMETRY_KEY = "telemetry";
   static constexpr auto MEASUREMENT_KEY = "sensor_measurement";
   static constexpr auto LASER_MEASUREMENT = "L";
   static constexpr auto RADAR_MEASUREMENT = "R";
-
   LaserMeasurement laser_measurement;
   RadarMeasurement radar_measurement;
-
   std::function<void(LaserMeasurement)> OnLaser;
   std::function<void(RadarMeasurement)> OnRadar;
-
 };
 
 void AdapterImpl::MessageToMeasurement(std::string message){
@@ -77,7 +78,7 @@ void AdapterImpl::RegisterRadarHandler(std::function<void(RadarMeasurement)> Rad
 }
 
 std::unique_ptr<Adapter> Adapter::GetInstance() {
-  return std::unique_ptr<Adapter>(new AdapterImpl());
+  return std::make_unique<AdapterImpl>();
 }
 
 }

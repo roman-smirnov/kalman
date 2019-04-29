@@ -9,6 +9,7 @@
 #include "server.h"
 #include <uWS/uWS.h>
 #include <iostream>
+#include <memory>
 
 namespace kalman {
 
@@ -123,7 +124,7 @@ void ServerImpl::BeginListening() {
 }
 
 std::unique_ptr<Server> Server::GetInstance() {
-  return std::unique_ptr<Server>(new ServerImpl());
+  return std::make_unique<ServerImpl>();
 }
 
 }
