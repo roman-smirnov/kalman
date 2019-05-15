@@ -52,9 +52,24 @@ class UnscentedFilter final : public Fusion {
   //internal state update
   void UpdateState();
   void UpdateEstimation(Measurement &measurement);
-  //TODO: static Mean<>() and Covariance<>() funcs
 
  private:
+  // weights of sigma points
+  const Vector<kNumSigmaPts> weights =
+      MakeVector<kNumSigmaPts>(kLambda, Vector<kNumSigmaPts - 1>::Constant(0.5)) / (kLambda + kDimAugState);
+
+  // radar measurement covariance matrix
+  const Matrix<kDimRadar> R_radar =
+      Vector<kDimRadar>(Square(kRadarMeasRhoNoise),
+                        Square(kRadarMeasPhiNoise),
+                        Square(kRadarMeasRhodotNoise)).asDiagonal();
+
+  const Matrix<kDimLidar> R_lidar =
+      Vector<kDimLidar>(Square(kLidarMeasPxNoise), Square(kLidarMeasPyNoise)).asDiagonal();
+
+  // process noise covariance matrix
+  const Matrix<2> Q = Vector<2>(Square(kAccelNoise), Square(kYawdNoise)).asDiagonal();
+
   // previous timestamp (UNIX Epoch time) in microseconds
   long long previous_timestamp = 0;
 
@@ -75,23 +90,6 @@ class UnscentedFilter final : public Fusion {
 
   // augmented sigma point state matrix
   Matrix<kDimAugState, kNumSigmaPts> x_sig_aug = Matrix<kDimAugState, kNumSigmaPts>::Zero();
-
-  // weights of sigma points
-  const Vector<kNumSigmaPts> weights =  // black magic sorcery
-      (Vector<kNumSigmaPts>() << kLambda, Vector<kNumSigmaPts - 1>::Constant(0.5)).finished()
-          / (kLambda + kDimAugState);
-
-  // radar measurement covariance matrix
-  const Matrix<kDimRadar> R_radar =
-      Vector<kDimRadar>(Square(kRadarMeasRhoNoise),
-                        Square(kRadarMeasPhiNoise),
-                        Square(kRadarMeasRhodotNoise)).asDiagonal();
-
-  const Matrix<kDimLidar> R_lidar =
-      Vector<kDimLidar>(Square(kLidarMeasPxNoise), Square(kLidarMeasPyNoise)).asDiagonal();
-
-  // process noise covariance matrix
-  const Matrix<2> Q = Vector<2>(Square(kAccelNoise), Square(kYawdNoise)).asDiagonal();
 
   // RMSE computed here
   Evaluation evaluation;
@@ -185,6 +183,7 @@ void UnscentedFilter::ReduceSigmaPoints() {
   P << pred_sig_dif * weights.asDiagonal() * pred_sig_dif.transpose();
 }
 
+//TODO: implement
 Matrix<kDimRadar, kNumSigmaPts> UnscentedFilter::RadarSigmaPoints() {
   auto px = x_sig_pred.row(0).array();
   auto py = x_sig_pred.row(1).array();
@@ -239,9 +238,12 @@ void UnscentedFilter::UpdateEstimation(Measurement &measurement) {
   estimation.vy_rmse = rmse[3];
 }
 
-//TODO: move this to somewhere in kalman scope
-//std::unique_ptr<Fusion> Fusion::GetUkfInstance() {
-//  return std::make_unique<UnscentedFilter>();
-//}
+}
+
+namespace kalman {
+
+std::unique_ptr<Fusion> Fusion::GetUkfInstance() {
+  return std::make_unique<fusion::internal::UnscentedFilter>();
+}
 
 }
