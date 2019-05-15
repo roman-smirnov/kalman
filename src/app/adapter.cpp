@@ -10,8 +10,8 @@ class AdapterImpl final : public Adapter {
  public:
   void MessageToMeasurement(std::string message) override;
   std::string EstimationToMessage(Estimation estimation) override;
-  void RegisterLaserHandler(std::function<void(LaserMeasurement)> LaserHandler) override;
-  void RegisterRadarHandler(std::function<void(RadarMeasurement)> RadarHandler) override;
+  void RegisterLaserHandler(std::function<void(LaserMeasurement, Truth)> LaserHandler) override;
+  void RegisterRadarHandler(std::function<void(RadarMeasurement, Truth)> RadarHandler) override;
 
  private:
   static constexpr auto TELEMETRY_KEY = "telemetry";
@@ -20,8 +20,10 @@ class AdapterImpl final : public Adapter {
   static constexpr auto RADAR_MEASUREMENT = "R";
   LaserMeasurement laser_measurement;
   RadarMeasurement radar_measurement;
-  std::function<void(LaserMeasurement)> OnLaser;
-  std::function<void(RadarMeasurement)> OnRadar;
+  Truth truth;
+
+  std::function<void(LaserMeasurement, Truth)> OnLaser;
+  std::function<void(RadarMeasurement, Truth)> OnRadar;
 };
 
 void AdapterImpl::MessageToMeasurement(std::string message){
@@ -40,40 +42,40 @@ void AdapterImpl::MessageToMeasurement(std::string message){
     iss >> laser_measurement.x;
     iss >> laser_measurement.y;
     iss >> laser_measurement.timestamp;
-    iss >> laser_measurement.x_truth;
-    iss >> laser_measurement.y_truth;
-    iss >> laser_measurement.vx_truth;
-    iss >> laser_measurement.vy_truth;
-    if(OnLaser) this->OnLaser(laser_measurement);
+    iss >> truth.x_truth;
+    iss >> truth.y_truth;
+    iss >> truth.vx_truth;
+    iss >> truth.vy_truth;
+    if (OnLaser) this->OnLaser(laser_measurement, truth);
   } else if(sensor_type == RADAR_MEASUREMENT) {
     iss >> radar_measurement.rho;
     iss >> radar_measurement.phi;
     iss >> radar_measurement.rhodot;
     iss >> radar_measurement.timestamp;
-    iss >> radar_measurement.x_truth;
-    iss >> radar_measurement.y_truth;
-    iss >> radar_measurement.vx_truth;
-    iss >> radar_measurement.vy_truth;
-    if (OnRadar) this->OnRadar(radar_measurement);
+    iss >> truth.x_truth;
+    iss >> truth.y_truth;
+    iss >> truth.vx_truth;
+    iss >> truth.vy_truth;
+    if (OnRadar) this->OnRadar(radar_measurement, truth);
   }
 }
 
 std::string AdapterImpl::EstimationToMessage(Estimation estimation) {
   nlohmann::json msgJson;
-  msgJson["estimate_x"] = estimation.x;
-  msgJson["estimate_y"] = estimation.y;
-  msgJson["rmse_x"] = estimation.x_rmse;
-  msgJson["rmse_y"] = estimation.y_rmse;
-  msgJson["rmse_vx"] = estimation.vx_rmse;
-  msgJson["rmse_vy"] = estimation.vy_rmse;
+  msgJson["estimate_x"] = estimation.first.x;
+  msgJson["estimate_y"] = estimation.first.y;
+  msgJson["rmse_x"] = estimation.second.x_rmse;
+  msgJson["rmse_y"] = estimation.second.y_rmse;
+  msgJson["rmse_vx"] = estimation.second.vx_rmse;
+  msgJson["rmse_vy"] = estimation.second.vy_rmse;
   auto msg = "42[\"estimate_marker\"," + msgJson.dump() + "]";
   return msg;
 }
 
-void AdapterImpl::RegisterLaserHandler(std::function<void(LaserMeasurement)> LaserHandler) {
+void AdapterImpl::RegisterLaserHandler(std::function<void(LaserMeasurement, Truth)> LaserHandler) {
   if (LaserHandler) this->OnLaser= LaserHandler;
 }
-void AdapterImpl::RegisterRadarHandler(std::function<void(RadarMeasurement)> RadarHandler) {
+void AdapterImpl::RegisterRadarHandler(std::function<void(RadarMeasurement, Truth)> RadarHandler) {
   if(RadarHandler) this->OnRadar = RadarHandler;
 }
 

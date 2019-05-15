@@ -13,8 +13,8 @@ class Adapter {
 
   virtual ~Adapter() = default;
 
-  virtual void RegisterLaserHandler(std::function<void(LaserMeasurement)> LaserHandler) = 0;
-  virtual void RegisterRadarHandler(std::function<void(RadarMeasurement)> RadarHandler) = 0;
+  virtual void RegisterLaserHandler(std::function<void(LaserMeasurement, Truth)> LaserHandler) = 0;
+  virtual void RegisterRadarHandler(std::function<void(RadarMeasurement, Truth)> RadarHandler) = 0;
 
   virtual void MessageToMeasurement(std::string message) = 0;
   virtual std::string EstimationToMessage(Estimation estimation) = 0;

@@ -14,15 +14,15 @@ int main() {
   std::unique_ptr<kalman::Fusion> fusion = kalman::Fusion::GetEkfInstance();
 
   // handle laser measurement callback
-  adapter -> RegisterLaserHandler([&](kalman::LaserMeasurement measurement){
-    auto estimation = fusion->ProcessMeasurement(measurement);
+  adapter->RegisterLaserHandler([&](kalman::LaserMeasurement measurement, kalman::Truth truth) {
+    auto estimation = fusion->ProcessMeasurement(measurement, truth);
     auto msg = adapter->EstimationToMessage(estimation);
     server->Send(msg);
   });
 
   // handle radar measurement callback
-  adapter -> RegisterRadarHandler([&](kalman::RadarMeasurement measurement){
-    auto estimation = fusion->ProcessMeasurement(measurement);
+  adapter->RegisterRadarHandler([&](kalman::RadarMeasurement measurement, kalman::Truth truth) {
+    auto estimation = fusion->ProcessMeasurement(measurement, truth);
     auto msg = adapter->EstimationToMessage(estimation);
     server->Send(msg);
   });
@@ -37,3 +37,4 @@ int main() {
 
   return EXIT_SUCCESS;
 }
+
